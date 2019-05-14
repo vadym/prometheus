@@ -1,0 +1,151 @@
+# See: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+groups:
+- name: alert.rules
+  rules:
+  - alert: webinar_host02_mem_usage_80_percent
+    expr: (node_memory_MemTotal{job="webinar-host02"} - (node_memory_MemFree{job="webinar-host02"}
+      + node_memory_Cached{job="webinar-host02"} + node_memory_Buffers{job="webinar-host02"}))
+      / node_memory_MemTotal{job="webinar-host02"} * 100 > 80
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }} memory usage {{ $value }}% more than 80%
+        for more than 3 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.instance }} memory usage {{ $value }}% more than
+        80%
+  - alert: webinar_host02_mem_usage_90_percent
+    expr: (node_memory_MemTotal{job="webinar-host02"} - (node_memory_MemFree{job="webinar-host02"}
+      + node_memory_Cached{job="webinar-host02"} + node_memory_Buffers{job="webinar-host02"}))
+      / node_memory_MemTotal{job="webinar-host02"} * 100 > 90
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }} memory usage {{ $value }}% more than 90%
+        for more than 3 minutes.'
+      severity: average
+      summary: Instance {{ $labels.instance }} memory usage {{ $value }}% more than
+        90%
+  - alert: webinar_host02_filesystem_usage_rootfs_70_percent
+    expr: (node_filesystem_size{job="webinar-host02",mountpoint="/rootfs"} - node_filesystem_free{job="webinar-host02",mountpoint="/rootfs"})
+      / node_filesystem_size{job="webinar-host02",mountpoint="/rootfs"} * 100 > 70
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }}''s filesystem {{ $labels.filesystem }}
+        usage {{ $value }}% is at 70% for more than 3 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is
+        at 70%
+  - alert: webinar_host02_filesystem_usage_rootfs_90_percent
+    expr: (node_filesystem_size{job="webinar-host02",mountpoint="/rootfs"} - node_filesystem_free{job="webinar-host02",mountpoint="/rootfs"})
+      / node_filesystem_size{job="webinar-host02",mountpoint="/rootfs"} * 100 > 90
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }}''s filesystem {{ $labels.filesystem }}
+        usage {{ $value }}% is at 90% for more than 3 minutes.'
+      severity: average
+      summary: Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is
+        at 90%
+  - alert: webinar_host02_filesystem_usage_rootfs_var_lib_vz_70_percent
+    expr: (node_filesystem_size{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"}
+      - node_filesystem_free{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"})
+      / node_filesystem_size{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"}
+      * 100 > 70
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }}''s filesystem {{ $labels.filesystem }}
+        usage {{ $value }}% is at 70% for more than 3 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is
+        at 70%
+  - alert: webinar_host02_filesystem_usage_rootfs_var_lib_vz_90_percent
+    expr: (node_filesystem_size{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"}
+      - node_filesystem_free{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"})
+      / node_filesystem_size{job="webinar-host02",mountpoint="/rootfs/var/lib/vz"}
+      * 100 > 90
+    for: 3m
+    annotations:
+      description: '{{ $labels.instance }}''s filesystem {{ $labels.filesystem }}
+        usage {{ $value }}% is at 90% for more than 3 minutes.'
+      severity: average
+      summary: Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is
+        at 90%
+  - alert: webinar_host02_down
+    expr: up{job="webinar-host02"} == 0
+    for: 1m
+    annotations:
+      description: '{{ $labels.instance }} has been unreachable for more than 1 minute.'
+      severity: critical
+      summary: Instance {{ $labels.instance }} is down
+  - alert: webinar_host02_cpu_at_70
+    expr: (1 - avg(irate(node_cpu{job="webinar-host02",mode="idle"}[3m])) BY (instance))
+      * 100 > 70
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} CPU usage {{ $value }}% has exceeded 70%
+        over the past 5 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.instance }} CPU usage {{ $value }}% is at 70%
+  - alert: webinar_host02_cpu_at_90
+    expr: (1 - avg(irate(node_cpu{job="webinar-host02",mode="idle"}[3m])) BY (instance))
+      * 100 > 90
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} CPU usage {{ $value }}% has exceeded 90%
+        over the past 5 minutes.'
+      severity: average
+      summary: Instance {{ $labels.instance }} CPU usage {{ $value }}% is at 90%
+  - alert: webinar_host02_load_at_70
+    expr: node_load1{job="webinar-host02"} * 100 > 70
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} system load {{ $value }}% has exceeded
+        70% over the past 5 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.instance }} system load {{ $value }}% is at 70%
+  - alert: webinar_host02_load_at_90
+    expr: node_load1{job="webinar-host02"} * 100 > 90
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} system load {{ $value }}% has exceeded
+        90% over the past 5 minutes.'
+      severity: average
+      summary: Instance {{ $labels.instance }} system load {{ $value }}% is at 90%
+  - alert: webinar_host02_network_at_500_MBits
+    expr: irate(node_network_transmit_bytes{job="webinar-host02"}[3m]) * 8 / 1e+06
+      > 500 or irate(node_network_receive_bytes{job="webinar-host02"}[3m]) * 8 / 1e+06
+      > 500
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} port traffic load {{ $value }} MBytes/sec
+        has exceeded 500 MBytes/sec over the past 5 minutes.'
+      severity: warning
+      summary: Instance {{ $labels.instance }}'s port traffic load {{ $value }} MBytes/sec
+        is at 500 MBytes/sec
+  - alert: webinar_host02_network_at_700_MBits
+    expr: irate(node_network_transmit_bytes{job="webinar-host02"}[3m]) * 8 / 1e+06
+      > 700 or irate(node_network_receive_bytes{job="webinar-host02"}[3m]) * 8 / 1e+06
+      > 700
+    for: 5m
+    annotations:
+      description: '{{ $labels.instance }} port traffic load {{ $value }} MBytes/sec
+        has exceeded 700 MBytes/sec over the past 5 minutes.'
+      severity: average
+      summary: Instance {{ $labels.instance }}'s port traffic load {{ $value }} MBytes/sec
+        is at 700 MBytes/sec
+  - alert: webinar_host02_ContainerStarted
+    expr: time() - container_start_time_seconds{image=~"registry.COMPANY.local/.*",job="webinar-host02"}
+      <= 60 and (container_start_time_seconds{image=~"registry.COMPANY.local/.*",job="webinar-host02"}
+      % (60 * 60 * 24) / (60 * 60) < 6.8 or container_start_time_seconds{image=~"registry.COMPANY.local/.*",job="webinar-host02"}
+      % (60 * 60 * 24) / (60 * 60) > 7.5)
+    annotations:
+      description: '{{ $labels.instance }} container {{$labels.image}} has been started
+        on {{$labels.host}}'
+      severity: critical
+      summary: Instance {{ $labels.instance }} container {{$labels.image}} started
+  - alert: webinar_host02_ContainerStopped
+    expr: time() - container_last_seen{image=~"registry.COMPANY.local/.*",job="webinar-host02"}
+      > 60
+    annotations:
+      description: '{{ $labels.instance }} container {{$labels.image}} has been stopped
+        on {{$labels.host}}'
+      severity: critical
+      summary: Instance {{ $labels.instance }} container {{$labels.image}} stopped

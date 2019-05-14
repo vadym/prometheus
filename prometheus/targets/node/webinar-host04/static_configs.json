@@ -1,0 +1,10 @@
+[
+  {
+    "targets": ["192.168.56.254:9100"],
+    "labels": {
+      "instance": "webinar-host04",
+      "group": "webinar-dev",
+      "environment": "dev"
+    }
+  }
+]

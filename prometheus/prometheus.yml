@@ -1,4 +1,6 @@
-# my global config
+# See: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+# Global config
 global:
   scrape_interval:     15s # By default, scrape targets every 15 seconds.
   evaluation_interval: 15s # By default, scrape targets every 15 seconds.
@@ -7,13 +9,14 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-      monitor: 'my-project'
+      monitor: 'webinar'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
-  - 'alert.rules'
-  # - "first.rules"
-  # - "second.rules"
+  - "targets/node/webinar-host01/alert.rules.yml"
+  - "targets/node/webinar-host02/alert.rules.yml"
+  - "targets/node/webinar-host03/alert.rules.yml"
+  - "targets/node/webinar-host04/alert.rules.yml"
 
 # alert
 alerting:
@@ -28,39 +31,22 @@ alerting:
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
 
-  - job_name: 'prometheus'
+  - job_name: 'webinar-host01'
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets/node/webinar-host01/*.json'
 
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
+  - job_name: 'webinar-host02'
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets/node/webinar-host02/*.json'
 
-    static_configs:
-         - targets: ['localhost:9090']
+  - job_name: 'webinar-host03'
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets/node/webinar-host03/*.json'
 
-
-  - job_name: 'cadvisor'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
-    dns_sd_configs:
-    - names:
-      - 'tasks.cadvisor'
-      type: 'A'
-      port: 8080
-
-#     static_configs:
-#          - targets: ['cadvisor:8080']
-
-  - job_name: 'node-exporter'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
-    dns_sd_configs:
-    - names:
-      - 'tasks.node-exporter'
-      type: 'A'
-      port: 9100
-    
-#     static_configs:
-#          - targets: ['node-exporter:9100']
+  - job_name: 'webinar-host04'
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets/node/webinar-host04/*.json'

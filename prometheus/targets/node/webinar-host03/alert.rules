@@ -1,0 +1,276 @@
+# See: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+# **
+##ALERT webinar_host03_mem_free_2048_MBype
+##  IF (node_memory_MemFree{job='webinar-host03'} + node_memory_Cached{job='webinar-host03'} + node_memory_Buffers{job='webinar-host03'})/1000000 < 2048
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }} MBytes less than 2048 MBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }} MBytes constantly exceeded 2048 MBytes minimum for more than 3 minutes.",
+##    severity = "warning"
+##  }
+##
+##ALERT webinar_host03_mem_free_1024_MBype
+##  IF (node_memory_MemFree{job='webinar-host03'} + node_memory_Cached{job='webinar-host03'} + node_memory_Buffers{job='webinar-host03'})/1000000 < 1024
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }} MBytes less than 1024 MBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }} MBytes constantly exceeded 1024 MBytes minimum for more than 3 minutes.",
+##    severity = "average"
+##  }
+
+ALERT webinar_host03_mem_usage_80_percent
+  IF (node_memory_MemTotal{job='webinar-host03'} - (node_memory_MemFree{job='webinar-host03'} + node_memory_Cached{job='webinar-host03'} + node_memory_Buffers{job='webinar-host03'})) / node_memory_MemTotal{job='webinar-host03'} * 100 > 80
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} memory usage {{ $value }}% more than 80%",
+    description = "{{ $labels.instance }} memory usage {{ $value }}% more than 80% for more than 3 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_mem_usage_90_percent
+  IF (node_memory_MemTotal{job='webinar-host03'} - (node_memory_MemFree{job='webinar-host03'} + node_memory_Cached{job='webinar-host03'} + node_memory_Buffers{job='webinar-host03'})) / node_memory_MemTotal{job='webinar-host03'} * 100 > 90
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} memory usage {{ $value }}% more than 90%",
+    description = "{{ $labels.instance }} memory usage {{ $value }}% more than 90% for more than 3 minutes.",
+    severity = "average"
+  }
+
+## Test
+###ALERT webinar_host03_mem_usage_1_percent
+###  IF (node_memory_MemTotal{job='webinar-host03'} - (node_memory_MemFree{job='webinar-host03'} + node_memory_Cached{job='webinar-host03'} + node_memory_Buffers{job='webinar-host03'})) / node_memory_MemTotal{job='webinar-host03'} * 100 > 1
+###  FOR 3m
+###  ANNOTATIONS {
+###    summary = "Instance {{ $labels.instance }} memory usage {{ $value }}% more than 1%",
+###    description = "{{ $labels.instance }} memory usage {{ $value }}% more than 1% for more than 3 minutes.",
+###    severity = "warning"
+###  }
+# ^^
+
+# **
+##ALERT webinar_host03_filesystem_free_rootfs_30_GByte
+##  IF node_filesystem_avail{job='webinar-host03',mountpoint='/rootfs'}/1000000 < 30720
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }}% less than 30 GBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }}% less than 30 GBytes for more than 3 minutes.",
+##    severity = "warning"
+##  }
+##
+##ALERT webinar_host03_filesystem_free_rootfs_10_GByte
+##  IF node_filesystem_avail{job='webinar-host03',mountpoint='/rootfs'}/1000000 < 10240
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }}% less than 10 GBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }}% less than 10 GBytes for more than 3 minutes.",
+##    severity = "average"
+##  }
+
+ALERT webinar_host03_filesystem_usage_rootfs_70_percent
+  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} * 100 > 70
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 70%",
+    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 70% for more than 3 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_filesystem_usage_rootfs_90_percent
+  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} * 100 > 90
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 90%",
+    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 90% for more than 3 minutes.",
+    severity = "average"
+  }
+
+# Test
+###ALERT webinar_host03_filesystem_usage_rootfs_1_percent
+###  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs'} * 100 > 1
+###  FOR 3m
+###  ANNOTATIONS {
+###    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 1%",
+###    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 5% for more than 3 minutes.",
+###    severity = "average"
+###  }
+
+## --
+##ALERT webinar_host03_filesystem_free_rootfs_var_lib_vz_30_GByte
+##  IF node_filesystem_avail{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'}/1000000 < 30720
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }}% less than 30 GBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }}% less than 30 GBytes for more than 3 minutes.",
+##    severity = "warning"
+##  }
+##
+##ALERT webinar_host03_filesystem_free_rootfs_var_lib_vz_10_GByte
+##  IF node_filesystem_avail{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'}/1000000 < 10240
+##  FOR 3m
+##  ANNOTATIONS {
+##    summary = "Instance {{ $labels.instance }} free memory {{ $value }}% less than 10 GBytes",
+##    description = "{{ $labels.instance }} free memory {{ $value }}% less than 10 GBytes for more than 3 minutes.",
+##    severity = "average"
+##  }
+
+ALERT webinar_host03_filesystem_usage_rootfs_var_lib_vz_70_percent
+  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} * 100 > 70
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 70%",
+    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 70% for more than 3 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_filesystem_usage_rootfs_var_lib_vz_90_percent
+  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} * 100 > 90
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 90%",
+    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 90% for more than 3 minutes.",
+    severity = "average"
+  }
+
+# Test
+###ALERT webinar_host03_filesystem_usage_rootfs_var_lib_vz_1_percent
+###  IF ( node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} - node_filesystem_free{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} ) / node_filesystem_size{job='webinar-host03',mountpoint='/rootfs/var/lib/vz'} * 100 > 1
+###  FOR 3m
+###  ANNOTATIONS {
+###    summary = "Instance {{ $labels.filesystem }} filesystem usage {{ $value }}% is at 1%",
+###    description = "{{ $labels.instance }}'s filesystem {{ $labels.filesystem }} usage {{ $value }}% is at 1% for more than 3 minutes.",
+###    severity = "average"
+###  }
+
+## ^^
+
+## **
+ALERT webinar_host03_down
+  IF up{job='webinar-host03'} == 0
+  FOR 1m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} is down",
+    description = "{{ $labels.instance }} has been unreachable for more than 1 minute.",
+    severity = "critical"
+  }
+## ^^
+
+
+#ALERT webinar_host03_disk_load_mostly_random_reads
+#  IF rate(diskIOReads{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) > 20 AND
+#     rate(diskIONReadX{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) / rate(diskIOReads{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) < 10000
+#  FOR 5m
+#  ANNOTATIONS {
+#    summary = "Disk {{$labels.diskIODevice}} reads are mostly random.",
+#    description = "{{$labels.diskIODevice}} reads have been mostly random for the past 5 minutes.",
+#    severity = "info"
+#  }
+
+#ALERT webinar_host03_disk_load_mostly_random_writes
+#  IF rate(diskIOWrites{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) > 20 AND
+#     rate(diskIONWrittenX{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) / rate(diskIOWrites{diskIODevice=~"sd[a-z]+",job='webinar-host03'}[3m]) < 10000
+#  FOR 5m
+#  ANNOTATIONS {
+#    summary = "Disk {{$labels.diskIODevice}} writes are mostly random.",
+#    description = "{{$labels.diskIODevice}} writes have been mostly random for the past 5 minutes.",
+#    severity = "info"
+#  }
+
+#ALERT webinar_host03_disk_load_high
+#  IF diskIOLA1{diskIODevice=~"s|vd[a-z]+",job='webinar-host03'} > 30
+#  FOR 5m
+#  ANNOTATIONS {
+#    summary = "Disk {{$labels.diskIODevice}} is at 30%",
+#    description = "{{$labels.diskIODevice}} Load has exceeded 30% over the past 5 minutes.",
+#    severity = "warning"
+#  }
+
+
+ALERT webinar_host03_cpu_at_70
+  IF (1 - avg by(instance)(irate(node_cpu{job='webinar-host03',mode='idle'}[3m]))) * 100 > 70
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} CPU usage {{ $value }}% is at 70%",
+    description = "{{ $labels.instance }} CPU usage {{ $value }}% has exceeded 70% over the past 5 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_cpu_at_90
+  IF (1 - avg by(instance)(irate(node_cpu{job='webinar-host03',mode='idle'}[3m]))) * 100 > 90
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} CPU usage {{ $value }}% is at 90%",
+    description = "{{ $labels.instance }} CPU usage {{ $value }}% has exceeded 90% over the past 5 minutes.",
+    severity = "average"
+  }
+
+## **
+ALERT webinar_host03_load_at_70
+  IF node_load1{job='webinar-host03'} * 100 > 70
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} system load {{ $value }}% is at 70%",
+    description = "{{ $labels.instance }} system load {{ $value }}% has exceeded 70% over the past 5 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_load_at_90
+  IF node_load1{job='webinar-host03'} * 100 > 90
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} system load {{ $value }}% is at 90%",
+    description = "{{ $labels.instance }} system load {{ $value }}% has exceeded 90% over the past 5 minutes.",
+    severity = "average"
+  }
+## ^^
+
+#ALERT webinar_host03_if_operstatus_changed
+#  IF delta(ifOperStatus{job='webinar-host03'}[5m]) != 0
+#  ANNOTATIONS {
+#    summary = "Port {{$labels.ifDescr}} changed status",
+#    description = "Port {{$labels.ifDescr}} went up or down in the past 5 minutes",
+#    severity = "info"
+#  }
+
+## **
+ALERT webinar_host03_network_at_500_MBits
+  IF irate(node_network_transmit_bytes{job='webinar-host03'}[3m])*8/1000000 > 500 OR
+     irate(node_network_receive_bytes{job='webinar-host03'}[3m])*8/1000000 > 500
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }}'s port traffic load {{ $value }} MBytes/sec is at 500 MBytes/sec",
+    description = "{{ $labels.instance }} port traffic load {{ $value }} MBytes/sec has exceeded 500 MBytes/sec over the past 5 minutes.",
+    severity = "warning"
+  }
+
+ALERT webinar_host03_network_at_700_MBits
+  IF irate(node_network_transmit_bytes{job='webinar-host03'}[3m])*8/1000000 > 700 OR
+     irate(node_network_receive_bytes{job='webinar-host03'}[3m])*8/1000000 > 700
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }}'s port traffic load {{ $value }} MBytes/sec is at 700 MBytes/sec",
+    description = "{{ $labels.instance }} port traffic load {{ $value }} MBytes/sec has exceeded 700 MBytes/sec over the past 5 minutes.",
+    severity = "average"
+  }
+
+## ^^
+
+ALERT webinar_host03_ContainerStarted
+  IF time() - container_start_time_seconds{image=~"registry.COMPANY.local/.*",job='webinar-host03'} <= 60
+    and (
+      container_start_time_seconds{image=~"registry.COMPANY.local/.*",job='webinar-host03'} % (60 * 60 * 24) / (60 * 60) < 6.8
+      or
+      container_start_time_seconds{image=~"registry.COMPANY.local/.*",job='webinar-host03'} % (60 * 60 * 24) / (60 * 60) > 7.5
+    )
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} container {{$labels.image}} started",
+    description = "{{ $labels.instance }} container {{$labels.image}} has been started on {{$labels.host}}",
+    severity = "critical"
+  }
+
+ALERT webinar_host03_ContainerStopped
+  IF time() - container_last_seen{image=~"registry.COMPANY.local/.*",job='webinar-host03'} > 60
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} container {{$labels.image}} stopped",
+    description = "{{ $labels.instance }} container {{$labels.image}} has been stopped on {{$labels.host}}",
+    severity = "critical"
+  }

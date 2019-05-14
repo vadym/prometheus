@@ -1,10 +1,92 @@
- route:
-     receiver: 'slack'
+# See: https://prometheus.io/docs/alerting/configuration/
+#      https://prometheus.io/webtools/alerting/routing-tree-editor/ - The visual editor can assist in building routing trees.
 
- receivers:
-     - name: 'slack'
-#       slack_configs:
-#           - send_resolved: true
-#             username: '<username>'
-#             channel: '#<channel-name>'
-#             api_url: '<incomming-webhook-url>'
+#global:
+#  resolve_timeout: 5m
+#  smtp_from: 'alertmanager@example.com'
+#  smtp_smarthost: mail.example.com:587
+#  smtp_auth_username: jesse@example.com
+#  smtp_auth_password: <secret>
+#  smtp_auth_secret: null
+#  smtp_auth_identity: ""
+#  smtp_require_tls: true
+
+route:
+    # The labels by which incoming alerts are grouped together. For example,
+    # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+    # be batched into a single group.
+    group_by: ['alertname', 'cluster', 'service']
+
+    # When a new group of alerts is created by an incoming alert, wait at
+    # least 'group_wait' to send the initial notification.
+    # This way ensures that you get multiple alerts for the same group that start
+    # firing shortly after another are batched together on the first
+    # notification.
+    group_wait: 30s
+
+    # When the first notification was sent, wait 'group_interval' to send a batch
+    # of new alerts that started firing for that group.
+    group_interval: 5m
+
+    # If an alert has successfully been sent, wait 'repeat_interval' to
+    # resend them.
+    repeat_interval: 3m
+
+    # A default receiver
+    #receiver: email-through-relay-to-USER
+    #receiver: email-through-gmail-to-USER
+    receiver: 'slack'
+
+    # All the above attributes are inherited by all child routes and can 
+    # overwritten on each.
+
+    # The child route trees.
+
+#templates:
+#    - '/etc/alertmanager/default.tmpl'
+
+inhibit_rules:
+    - source_match:
+        severity: 'critical'
+
+      target_match:
+        severity: 'warning'
+
+      # Apply inhibition if the alertname is the same.
+      equal: ['alertname']
+
+receivers:
+
+# Slack
+    - name: 'slack'
+#      slack_configs:
+#        - send_resolved: true
+#          username: 'alertmanager-bot'
+#          channel: '#-alertmanager'
+#          api_url: 'https://hooks.slack.com/services/XXX'
+##          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+##          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+
+# Gmail
+#    - name: email-through-gmail-to-USER
+#      email_configs:
+#        - to: GMAIL_ACCOUNT
+#          from: 'notifications@alertmanager.example.com'
+#          smarthost: smtp.gmail.com:587
+#
+##          html: '{{ template "email.default.html" . }}'
+##          auth_username: "GMAIL_ACCOUNT"
+##          auth_identity: "GMAIL_ACCOUNT"
+##          auth_password: "GMAIL_AUTH_TOKEN"
+
+# Relay
+#    - name: email-through-relay-to-USER
+#      email_configs:
+#        - to: 'USER@COMPANY.com'
+#          from: 'notifications@alertmanager.example.com'
+#          smarthost: 'relay-mail.example.com'
+#
+##          html: '{{ template "email.default.html" . }}'
+##          auth_username: ""
+##          auth_identity: ""
+##          auth_password: ""
