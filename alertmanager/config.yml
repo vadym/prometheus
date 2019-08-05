@@ -59,13 +59,13 @@ receivers:
 
 # Slack
     - name: 'slack'
-#      slack_configs:
-#        - send_resolved: true
-#          username: 'alertmanager-bot'
-#          channel: '#-alertmanager'
-#          api_url: 'https://hooks.slack.com/services/XXX'
-##          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-##          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+      slack_configs:
+        - send_resolved: true
+          username: 'alertmanager-bot'
+          channel: '#prometheus'
+          api_url: 'https://hooks.slack.com/services/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'
+          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
 
 # Gmail
 #    - name: email-through-gmail-to-USER

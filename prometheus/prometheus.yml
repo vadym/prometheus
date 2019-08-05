@@ -17,6 +17,7 @@ rule_files:
   - "targets/node/webinar-host02/alert.rules.yml"
   - "targets/node/webinar-host03/alert.rules.yml"
   - "targets/node/webinar-host04/alert.rules.yml"
+  - "targets/node/webinar-host05/alert.rules.yml"
 
 # alert
 alerting:
@@ -50,3 +51,7 @@ scrape_configs:
     file_sd_configs:
       - files:
         - '/etc/prometheus/targets/node/webinar-host04/*.json'
+  - job_name: 'webinar-host05'
+    file_sd_configs:
+      - files:
+        - '/etc/prometheus/targets/node/webinar-host05/*.json'
