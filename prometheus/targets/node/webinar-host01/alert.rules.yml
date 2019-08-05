@@ -5,7 +5,7 @@ groups:
   - alert: webinar_host01_mem_usage_80_percent
     expr: (node_memory_MemTotal{job="webinar-host01"} - (node_memory_MemFree{job="webinar-host01"}
       + node_memory_Cached{job="webinar-host01"} + node_memory_Buffers{job="webinar-host01"}))
-      / node_memory_MemTotal{job="webinar-host01"} * 100 > 80
+      / node_memory_MemTotal{job="webinar-host01"} * 100 > 5
     for: 3m
     annotations:
       description: '{{ $labels.instance }} memory usage {{ $value }}% more than 80%
