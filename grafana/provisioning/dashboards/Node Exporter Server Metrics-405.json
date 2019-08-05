@@ -369,14 +369,6 @@
           "step": 1200
         },
         {
-          "expr": "node_memory_Cached_bytes{instance=~'$node'} or node_memory_Cached{instance=~'$node'}",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Cached",
-          "refId": "D",
-          "step": 1200
-        },
-        {
           "expr": "node_memory_MemFree_bytes{instance=~'$node'} or node_memory_MemFree{instance=~'$node'}",
           "hide": false,
           "interval": "",
