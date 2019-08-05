@@ -37,7 +37,7 @@ route:
     #receiver: email-through-gmail-to-USER
     receiver: 'slack'
 
-    # All the above attributes are inherited by all child routes and can 
+    # All the above attributes are inherited by all child routes and can
     # overwritten on each.
 
     # The child route trees.
@@ -59,13 +59,13 @@ receivers:
 
 # Slack
     - name: 'slack'
-#      slack_configs:
-#        - send_resolved: true
-#          username: 'alertmanager-bot'
-#          channel: '#-alertmanager'
-#          api_url: 'https://hooks.slack.com/services/XXX'
-##          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-##          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+      slack_configs:
+        - send_resolved: true
+          username: 'AlertYura'
+          channel: '#devops'
+          api_url: https://hooks.slack.com/services/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
+          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
 
 # Gmail
 #    - name: email-through-gmail-to-USER
